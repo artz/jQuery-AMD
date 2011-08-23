@@ -2,7 +2,10 @@
 	jQuery AMD
 	A plugin that adds the AMD (Asynchronous Module Definition) to jQuery.
 */
-!function($, window, undefined){
+!function($, window, undefined) {
+	
+	// Make JSLint happier.
+	"use strict";
 	
 	function is( str, type ) {
 		return typeof str === type;
@@ -24,7 +27,20 @@
 	var $Observer = $({}),
 		modules = {},
 		moduleDefinitions = {},
-		definedModules = [];
+		definedModules = [],
+		amdOptions = {	
+			basePath: "",
+			filename: function(str){ return str.toLowerCase(); },
+			suffix: ".min.js"
+		};
+	
+	$.use.option = function( customOptions, value ) {
+		if ( isString( customOptions ) ) {
+			amdOptions[ customOptions ] = value;
+		} else {
+			$.extend( amdOptions, customOptions );
+		}
+	};
 	
 	$.define = function( moduleName, moduleDependencies, moduleDefinition ) {
 		
@@ -50,7 +66,7 @@
 		} else {
 			definedModules.push( moduleDefinition );
 		}	
-	}
+	};
 
 	// We conform to the AMD spec.
 	// https://github.com/amdjs/amdjs-api/wiki/AMD
@@ -77,7 +93,6 @@
 
 	// Global default use options.
 	// To Do: Provide way to update.
-	var useOptions = {};
 	$.use = function( customOptions, moduleNames, callback ) {
 
 		if ( $.isArray( customOptions ) || isString( customOptions ) ) {
@@ -87,7 +102,7 @@
 
 		moduleNames = isString( moduleNames ) ? [ moduleNames ] : moduleNames;
 		
-		var options = $.extend( {}, useOptions, customOptions || {} ),
+		var options = $.extend( {}, amdOptions, customOptions || {} ),
 			callbackArgs = [],
 			moduleCount = 0;
 			
@@ -169,21 +184,5 @@
 			}
 		});
 	};
-	
-	var amdOptions = {	
-			basePath: "",
-			filename: function(str){ return str.toLowerCase(); },
-			suffix: ".min.js"
-		};
-	
-	function option( customOptions, value ) {
-		if ( isString( customOptions ) ) {
-			amdOptions[ customOptions ] = value;
-		} else {
-			$.extend( amdOptions, customOptions );
-		}
-	}
-	
-	$.use.option = option;
 	
 }(jQuery, this);
