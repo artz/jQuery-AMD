@@ -21,7 +21,7 @@
 	Define a module, based on the Asynchronous Module Definition (AMD)
 	http://wiki.commonjs.org/wiki/Modules/AsynchronousDefinition
 */
-	var $observer = $({}),
+	var $Observer = $({}),
 		modules = {},
 		moduleDefinitions = {},
 		definedModules = [];
@@ -106,13 +106,11 @@
 			
 			// Tell the others.
 			if ( module ) {
-				$observer.trigger( moduleName );
+				$Observer.trigger( moduleName );
 			}
 		}
 
 		$.each( moduleNames, function( i, moduleName ) {
-
-
 
 			// If this module has already been defined...
 			if ( moduleName in modules ) {
@@ -122,7 +120,7 @@
 					moduleReady( i, moduleName );
 				// It's undefined, so wait a little bit.
 				} else {
-					$observer.bind( moduleName, function(){
+					$Observer.bind( moduleName, function(){
 						moduleReady( i, moduleName );
 					});
 				}
@@ -157,7 +155,7 @@
 	
 							} else {
 								
-								module = ( isFunction( moduleDefinition ) ? moduleDefinition($) : moduleDefinition ) || $;
+								module = ( isFunction( moduleDefinition ) ? moduleDefinition.call($, $) : moduleDefinition ) || $;
 								moduleReady( i, moduleName, module );
 	
 							}
