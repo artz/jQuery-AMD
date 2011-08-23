@@ -67,30 +67,6 @@
 	$.use(["yourlib/foo", "mylib/foo"], function( yourLibFoo, myLibFoo ) {
 		$("#mylib-yourlib-foo-test").html("mylib/foo.foo === " + myLibFoo.foo + ", yourlib/foo.foo === " + yourLibFoo.foo + ", yourlib/foo.bar() === " + yourLibFoo.bar() + ", yourlib/foo.baz === " + yourLibFoo.baz);
 	});
-	
-/*
-
-Boot.use("yourlib/foo", function( fooModule ) {
-	Boot.log("We made it this far! yourlib/foo callback. " + fooModule );
-	if ( fooModule ) { 
-		Boot.log("The 1st foo property of YourLib.fooModule exists: " + fooModule.foo );
-		Boot.log("Checking that bar and baz were passed through: fooModule.bar() === " + fooModule.bar() + ", fooModule.baz === " + fooModule.baz );
-	}
-});
-
-Boot.use("mylib/foo", function( fooModule ){
-	Boot.log("Callback! Mylib foo loaded.");
-});
-
-Boot.use(["yourlib/foo", "mylib/foo"], function( yourFooModule, myFooModule ) {
-	Boot.log("Here we go again! <b>mylib/foo</b> + <b>yourlib/foo</b> callback. ");
-	if ( myFooModule && yourFooModule ) { 
-		Boot.log("The 2nd foo property of YourLib.fooModule exists: " + yourFooModule.foo );
-		Boot.log("Checking that bar and baz were passed through: yourFooModule.bar() === " + yourFooModule.bar() + ", yourFooModule.baz === " + yourFooModule.baz +", myFooModule.foo === " + myFooModule.foo );
-	}
-});
-
-*/
 
 })(jQuery);
 </script>
