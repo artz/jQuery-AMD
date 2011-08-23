@@ -2,7 +2,7 @@
 	jQuery AMD
 	A plugin that adds the AMD (Asynchronous Module Definition) to jQuery.
 */
-!function($, window){
+!function($, window, undefined){
 	
 	function is( str, type ) {
 		return typeof str === type;
