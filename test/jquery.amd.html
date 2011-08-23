@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title></title>
+  <meta name="description" content="">
+  <meta name="author" content="Dave Artz">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<div id="container">
+	<h1>jQuery AMD Plugin</h1>
+	<div id="alpha-test"></div>
+	<div id="alpha-test2"></div>
+	<div id="beta-test"></div>
+	<div id="gamma-test"></div>
+	<div id="gamma-test2"></div>
+</div>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script src="../src/jquery.amd.js"></script>
+<script>
+(function($){
+
+	// Change global default for use & define functions.
+	$.use.option("basePath", "js/");
+
+	$.use(["jquery.alpha", "jquery.beta"], function($){
+
+		$("#alpha-test").alpha();
+		$("#beta-test").beta();
+		
+		// beta should load gamma
+		$("#gamma-test").gamma();
+		
+	});
+
+	$.use("jquery.alpha", function($){
+		$("#alpha-test2").alpha();
+	});
+
+	$.use("jquery.gamma", function($){
+		$("#gamma-test2").gamma();
+	});
+
+})(jQuery);
+</script>
+</body>
+</html>
