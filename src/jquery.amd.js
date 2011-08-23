@@ -112,9 +112,7 @@
 
 		$.each( moduleNames, function( i, moduleName ) {
 
-			var module,
-				moduleDependencies,
-				moduleDefinition;
+
 
 			// If this module has already been defined...
 			if ( moduleName in modules ) {
@@ -142,12 +140,13 @@
 					dataType: "script",
 					cache: true,
 					complete: function( src ) {
-
+						
+						var module,
+							moduleDependencies,
+							moduleDefinition;
+						
 						// If a module was defined after our download.
-						if ( definedModules.length ) {
-							
-							// Snag the first one and remember it.
-							moduleDefinition = moduleDefinitions[ moduleName ] = definedModules.shift();
+						if ( moduleDefinition = moduleDefinitions[ moduleName ] || definedModules.shift() ) {
 							
 							if ( moduleDependencies = moduleDefinition.d ) {
 	

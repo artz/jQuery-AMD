@@ -39,7 +39,7 @@
 		$("#alpha-test").alpha();
 		$("#beta-test").beta();
 		
-		// beta should load gamma
+		// beta should load gamma, making it available.
 		$("#gamma-test").gamma();
 		
 	});
@@ -51,6 +51,8 @@
 	$.use("jquery.gamma", function($){
 		$("#gamma-test2").gamma();
 	});
+	
+	
 
 })(jQuery);
 </script>
