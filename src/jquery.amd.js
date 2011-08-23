@@ -34,14 +34,6 @@
 			suffix: ".min.js"
 		};
 	
-	$.use.option = function( customOptions, value ) {
-		if ( isString( customOptions ) ) {
-			amdOptions[ customOptions ] = value;
-		} else {
-			$.extend( amdOptions, customOptions );
-		}
-	};
-	
 	$.define = function( moduleName, moduleDependencies, moduleDefinition ) {
 		
 		if ( ! isString( moduleName ) ) {
@@ -183,6 +175,14 @@
 				});
 			}
 		});
+	};
+	
+	$.use.option = function( customOptions, value ) {
+		if ( isString( customOptions ) ) {
+			amdOptions[ customOptions ] = value;
+		} else {
+			$.extend( amdOptions, customOptions );
+		}
 	};
 	
 }(jQuery, this);
