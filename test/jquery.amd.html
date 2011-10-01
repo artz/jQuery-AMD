@@ -29,15 +29,15 @@
 	<div id="mylib-yourlib-foo-test"></div>
 </div>
 
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script src="js/jquery-1.6.1.min.js"></script>
 <script src="../src/jquery.amd.js"></script>
 <script>
 (function($){
 
-	// Change global default for use & define functions.
-	$.use.option("basePath", "js/");
+	// Change global default for require & define functions.
+	$.require.option("basePath", "js/");
 
-	$.use(["jquery.alpha", "jquery.beta"], function($){
+	$.require(["jquery.alpha", "jquery.beta"], function($){
 
 		$("#alpha-test").alpha();
 		$("#beta-test").beta();
@@ -47,24 +47,24 @@
 		
 	});
 
-	$.use("jquery.alpha", function($){
+	$.require("jquery.alpha", function($){
 		$("#alpha-test2").alpha();
 	});
 
-	$.use("jquery.gamma", function($){
+	$.require("jquery.gamma", function($){
 		$("#gamma-test2").gamma();
 	});
 	
-	$.use("yourlib/foo", function( yourLibFoo ) {
+	$.require("yourlib/foo", function( yourLibFoo ) {
 		// yourlib/foo loads two dependencies (bar and baz) and exposes them.
 		$("#yourlib-foo-test").html("yourlib/foo.foo === " + yourLibFoo.foo + ", yourlib/foo.bar() === " + yourLibFoo.bar() + ", yourlib/foo.baz === " + yourLibFoo.baz);
 	});
 	
-	$.use("mylib/foo", function( myLibFoo ) {
+	$.require("mylib/foo", function( myLibFoo ) {
 		$("#mylib-foo-test").html("mylib/foo.foo === " + myLibFoo.foo);
 	});
 	
-	$.use(["yourlib/foo", "mylib/foo"], function( yourLibFoo, myLibFoo ) {
+	$.require(["yourlib/foo", "mylib/foo"], function( yourLibFoo, myLibFoo ) {
 		$("#mylib-yourlib-foo-test").html("mylib/foo.foo === " + myLibFoo.foo + ", yourlib/foo.foo === " + yourLibFoo.foo + ", yourlib/foo.bar() === " + yourLibFoo.bar() + ", yourlib/foo.baz === " + yourLibFoo.baz);
 	});
 

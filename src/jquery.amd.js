@@ -83,9 +83,9 @@
 		return obj;
 	}
 
-	// Global default use options.
+	// Global default require options.
 	// To Do: Provide way to update.
-	$.use = function( customOptions, moduleNames, callback ) {
+	$.require = function( customOptions, moduleNames, callback ) {
 
 		if ( $.isArray( customOptions ) || isString( customOptions ) ) {
 			callback = moduleNames;
@@ -118,7 +118,34 @@
 		}
 
 		$.each( moduleNames, function( i, moduleName ) {
+			
+			function defineModule() {
+							
+				var module,
+					moduleDependencies,
+					moduleDefinition = moduleDefinitions[ moduleName ] || definedModules.shift();
 
+				if ( moduleDefinition ) {
+
+					if ( moduleDependencies = moduleDefinition.d ) {
+	
+						$.require( customOptions, moduleDependencies, function(){
+							module = ( isFunction( moduleDefinition ) ? moduleDefinition.apply( $, arguments ) : moduleDefinition ) || $;
+							moduleReady( i, moduleName, module );
+						});
+	
+					} else {
+						
+						module = ( isFunction( moduleDefinition ) ? moduleDefinition.call($, $) : moduleDefinition ) || $;
+						moduleReady( i, moduleName, module );
+	
+					}
+	
+				// Otherwise see if we can snag the module by name (old skool).	
+				} else {
+					moduleReady( i, moduleName, getLibrary( moduleName ) );
+				}
+			}
 			// If this module has already been defined...
 			if ( moduleName in modules ) {
 				
@@ -140,44 +167,23 @@
 				// module requests wait until the event is emmitted.
 				modules[ moduleName ] = undefined;
 				
-				$.ajax({
-					url: resolve( options, moduleName ),
-					dataType: "script",
-					cache: true,
-					complete: function( src ) {
-						
-						var module,
-							moduleDependencies,
-							moduleDefinition;
-						
-						// If a module was defined after our download.
-						if ( moduleDefinition = moduleDefinitions[ moduleName ] || definedModules.shift() ) {
-							
-							if ( moduleDependencies = moduleDefinition.d ) {
-	
-								$.use( moduleDependencies, function(){
-									module = ( isFunction( moduleDefinition ) ? moduleDefinition.apply( $, arguments ) : moduleDefinition ) || $;
-									moduleReady( i, moduleName, module );
-								});
-	
-							} else {
-								
-								module = ( isFunction( moduleDefinition ) ? moduleDefinition.call($, $) : moduleDefinition ) || $;
-								moduleReady( i, moduleName, module );
-	
-							}
-	
-						// Otherwise see if we can snag the module by name (old skool).	
-						} else {
-							moduleReady( i, moduleName, getLibrary( moduleName ) );
-						}
-					}
-				});
+				if ( moduleDefinitions[ moduleName ] ) {
+//					global.log("Defining module immediately: " + moduleName);
+					defineModule();
+				// Otherwise fetch the script based on the module name
+				} else {
+					$.ajax({
+						url: resolve( options, moduleName ),
+						dataType: "script",
+						cache: true,
+						complete: defineModule
+					});
+				}
 			}
 		});
 	};
 	
-	$.use.option = function( customOptions, value ) {
+	$.require.option = function( customOptions, value ) {
 		if ( isString( customOptions ) ) {
 			amdOptions[ customOptions ] = value;
 		} else {
