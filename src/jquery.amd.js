@@ -65,21 +65,39 @@
 	$.define.amd = {};
 
 	function resolve( customOptions, module ) {
-		var options = $.extend( {}, amdOptions, customOptions || {} );
-		return options.basePath + options.filename( module ) + options.suffix;
-	}
 
+		var options = $.extend( {}, amdOptions, customOptions || {} ),
+			basePath = options.basePath,
+			filename = options.filename( module ),
+			suffix = options.suffix;
+
+		// If the module name ends with .js
+		if ( /\.js$/.test( module ) ) {
+			// Use the module as the filename instead.
+			filename = module;
+			suffix = "";
+			// If the module name starts with "http://" or "https://"
+			if ( /^http[s]*:\/\//.test( module ) ) {
+				// Remove the basePath
+				basePath = "";
+			}
+		}
+
+		return basePath + filename + suffix;
+	}
+	
 	// Resolves a module based on a string.
 	function getLibrary( moduleName ) {
-		// i.e. "jQuery.alpha", "MyLib.foo.bar"
+
 		var obj = window;
 
 		$.each( moduleName.split("."), function( i, name ) {
-			if ( obj.hasOwnProperty( name ) ) {
+			if ( typeof obj[ name ] === "object" ) {
 				obj = obj[ name ];
 			}
+			// Consider breaking each here.
 		});
-	
+
 		return obj;
 	}
 
@@ -90,10 +108,11 @@
 		if ( $.isArray( customOptions ) || isString( customOptions ) ) {
 			callback = moduleNames;
 			moduleNames = customOptions;
+			customOptions = {};
 		}
 
 		moduleNames = isString( moduleNames ) ? [ moduleNames ] : moduleNames;
-		
+	
 		var options = $.extend( {}, amdOptions, customOptions || {} ),
 			callbackArgs = [],
 			moduleCount = 0;
@@ -110,7 +129,7 @@
 			if ( ++moduleCount === moduleNames.length ) {
 				callback.apply( $, callbackArgs );
 			}
-			
+
 			// Tell the others.
 			if ( module ) {
 				$Observer.trigger( moduleName );
@@ -118,9 +137,9 @@
 		}
 
 		$.each( moduleNames, function( i, moduleName ) {
-			
+
 			function defineModule() {
-							
+
 				var module,
 					moduleDependencies,
 					moduleDefinition = moduleDefinitions[ moduleName ] || definedModules.shift();
@@ -128,7 +147,7 @@
 				if ( moduleDefinition ) {
 
 					if ( moduleDependencies = moduleDefinition.d ) {
-	
+
 						$.require( customOptions, moduleDependencies, function(){
 							module = ( isFunction( moduleDefinition ) ? moduleDefinition.apply( $, arguments ) : moduleDefinition ) || $;
 							moduleReady( i, moduleName, module );
@@ -169,7 +188,7 @@
 				
 				if ( moduleDefinitions[ moduleName ] ) {
 //					global.log("Defining module immediately: " + moduleName);
-					defineModule();
+					defineModule(moduleName);
 				// Otherwise fetch the script based on the module name
 				} else {
 					$.ajax({
@@ -184,8 +203,13 @@
 	};
 	
 	$.require.option = function( customOptions, value ) {
+	
 		if ( isString( customOptions ) ) {
-			amdOptions[ customOptions ] = value;
+			if ( value ) {
+				amdOptions[ customOptions ] = value;
+			} else {
+				return amdOptions[ customOptions ];
+			}
 		} else {
 			$.extend( amdOptions, customOptions );
 		}
