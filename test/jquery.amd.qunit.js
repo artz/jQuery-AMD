@@ -160,7 +160,7 @@ asyncTest("Require Multiple Pre-defined AMD Libraries", function(){
 
 asyncTest("Customized Filename", function(){
 	
-	$.require({ filename: function(name){ return name.replace("/", "."); }, suffix: ".js" }, "custom/name", function( custom ){
+	$.require({ basePath: "js/", filename: function(name){ return name.replace("/", "."); }, suffix: ".js" }, "custom/name", function( custom ){
 		same( custom.custom, true, "Customized filename works!");
 		start();
 	});
