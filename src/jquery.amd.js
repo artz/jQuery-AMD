@@ -113,7 +113,7 @@
 
 		moduleNames = isString( moduleNames ) ? [ moduleNames ] : moduleNames;
 	
-		var options = $.extend( {}, amdOptions, customOptions || {} ),
+		var options = $.extend( {}, amdOptions, customOptions ),
 			callbackArgs = [],
 			moduleCount = 0;
 			
@@ -165,6 +165,7 @@
 					moduleReady( i, moduleName, getLibrary( moduleName ) );
 				}
 			}
+
 			// If this module has already been defined...
 			if ( moduleName in modules ) {
 				
@@ -186,9 +187,9 @@
 				// module requests wait until the event is emmitted.
 				modules[ moduleName ] = undefined;
 				
+				// If the module was defined by some other script
 				if ( moduleDefinitions[ moduleName ] ) {
-//					global.log("Defining module immediately: " + moduleName);
-					defineModule(moduleName);
+					defineModule();
 				// Otherwise fetch the script based on the module name
 				} else {
 					$.ajax({
