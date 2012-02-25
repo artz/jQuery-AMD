@@ -215,5 +215,13 @@
 			$.extend( amdOptions, customOptions );
 		}
 	};
+
+	if (window.require == null) {
+		window.require = $.require;
+	}
+
+	if (window.define == null) {
+		window.define = $.define;
+	}
 	
 }(jQuery, this);
