@@ -216,12 +216,7 @@
 		}
 	};
 
-	if (window.require == null) {
-		window.require = $.require;
-	}
-
-	if (window.define == null) {
-		window.define = $.define;
-	}
+	if (!window.require) window.require = $.require;
+	if (!window.define) window.define = $.define;
 	
 }(jQuery, this);
