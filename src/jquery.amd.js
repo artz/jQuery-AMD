@@ -127,7 +127,7 @@
 			
 			// All dependencies loaded, fire callback.
 			if ( ++moduleCount === moduleNames.length ) {
-				callback.apply( $, callbackArgs );
+				if ($.isFunction(callback)) callback.apply( $, callbackArgs );
 			}
 
 			// Tell the others.
@@ -215,5 +215,8 @@
 			$.extend( amdOptions, customOptions );
 		}
 	};
+
+	if (!window.require) window.require = $.require;
+	if (!window.define) window.define = $.define;
 	
 }(jQuery, this);
