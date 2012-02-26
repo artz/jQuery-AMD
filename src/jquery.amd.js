@@ -127,7 +127,9 @@
 
             // All dependencies loaded, fire callback.
             if ( ++moduleCount === moduleNames.length ) {
-                callback.apply( $, callbackArgs );
+                if ( $.isFunction( callback ) ) {
+                    callback.apply( $, callbackArgs );
+                }
             }
 
             // Tell the others.
