@@ -63,6 +63,9 @@
     // We conform to the AMD spec.
     // https://github.com/amdjs/amdjs-api/wiki/AMD
     $.define.amd = {};
+    if ( ! window.define ) {
+        window.define = $.define;
+    }
 
     function resolve( customOptions, module ) {
 
