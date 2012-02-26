@@ -1,219 +1,219 @@
 /*
-	jQuery AMD
-	A plugin that adds the AMD (Asynchronous Module Definition) to jQuery.
+    jQuery AMD
+    A plugin that adds the AMD (Asynchronous Module Definition) to jQuery.
 */
 !function($, window, undefined) {
-	
-	// Make JSLint happier.
-	"use strict";
-	
-	function is( str, type ) {
-		return typeof str === type;
-	}
-	
-	function isString( test ) {
-		return is( test, "string" );
-	}
-	
-	function isFunction( test ) {
-		return is( test, "function" );
-	}
+
+    // Make JSLint happier.
+    "use strict";
+
+    function is( str, type ) {
+        return typeof str === type;
+    }
+
+    function isString( test ) {
+        return is( test, "string" );
+    }
+
+    function isFunction( test ) {
+        return is( test, "function" );
+    }
 
 /*
-	Boot.define
-	Define a module, based on the Asynchronous Module Definition (AMD)
-	http://wiki.commonjs.org/wiki/Modules/AsynchronousDefinition
+    Boot.define
+    Define a module, based on the Asynchronous Module Definition (AMD)
+    http://wiki.commonjs.org/wiki/Modules/AsynchronousDefinition
 */
-	var $Observer = $({}),
-		modules = {},
-		moduleDefinitions = {},
-		definedModules = [],
-		amdOptions = {	
-			basePath: "",
-			filename: function(str){ return str.toLowerCase(); },
-			suffix: ".min.js"
-		};
-	
-	$.define = function( moduleName, moduleDependencies, moduleDefinition ) {
-		
-		if ( ! isString( moduleName ) ) {
-			moduleDefinition = moduleDependencies;
-			moduleDependencies = moduleName;
-			moduleName = undefined;				
-		}
+    var $Observer = $({}),
+        modules = {},
+        moduleDefinitions = {},
+        definedModules = [],
+        amdOptions = {
+            basePath: "",
+            filename: function(str){ return str.toLowerCase(); },
+            suffix: ".min.js"
+        };
 
-		if ( ! $.isArray( moduleDependencies ) ) {
-			moduleDefinition = moduleDependencies;
-			moduleDependencies = undefined;
-		}
+    $.define = function( moduleName, moduleDependencies, moduleDefinition ) {
 
-		// Load in any dependencies, and pass them into the use callback.
-		if ( moduleDependencies ) {
-			// Remember that this guy has a dependency, and which one it is.
-			moduleDefinition.d = moduleDependencies;
-		}
-		
-		if ( moduleName ) {
-			moduleDefinitions[ moduleName ] = moduleDefinition;
-		} else {
-			definedModules.push( moduleDefinition );
-		}	
-	};
+        if ( ! isString( moduleName ) ) {
+            moduleDefinition = moduleDependencies;
+            moduleDependencies = moduleName;
+            moduleName = undefined;
+        }
 
-	// We conform to the AMD spec.
-	// https://github.com/amdjs/amdjs-api/wiki/AMD
-	$.define.amd = {};
+        if ( ! $.isArray( moduleDependencies ) ) {
+            moduleDefinition = moduleDependencies;
+            moduleDependencies = undefined;
+        }
 
-	function resolve( customOptions, module ) {
+        // Load in any dependencies, and pass them into the use callback.
+        if ( moduleDependencies ) {
+            // Remember that this guy has a dependency, and which one it is.
+            moduleDefinition.d = moduleDependencies;
+        }
 
-		var options = $.extend( {}, amdOptions, customOptions || {} ),
-			basePath = options.basePath,
-			filename = options.filename( module ),
-			suffix = options.suffix;
+        if ( moduleName ) {
+            moduleDefinitions[ moduleName ] = moduleDefinition;
+        } else {
+            definedModules.push( moduleDefinition );
+        }
+    };
 
-		// If the module name ends with .js
-		if ( /\.js$/.test( module ) ) {
-			// Use the module as the filename instead.
-			filename = module;
-			suffix = "";
-			// If the module name starts with "http://" or "https://"
-			if ( /^http[s]*:\/\//.test( module ) ) {
-				// Remove the basePath
-				basePath = "";
-			}
-		}
+    // We conform to the AMD spec.
+    // https://github.com/amdjs/amdjs-api/wiki/AMD
+    $.define.amd = {};
 
-		return basePath + filename + suffix;
-	}
-	
-	// Resolves a module based on a string.
-	function getLibrary( moduleName ) {
+    function resolve( customOptions, module ) {
 
-		var obj = window;
+        var options = $.extend( {}, amdOptions, customOptions || {} ),
+            basePath = options.basePath,
+            filename = options.filename( module ),
+            suffix = options.suffix;
 
-		$.each( moduleName.split("."), function( i, name ) {
-			if ( typeof obj[ name ] === "object" ) {
-				obj = obj[ name ];
-			}
-			// Consider breaking each here.
-		});
+        // If the module name ends with .js
+        if ( /\.js$/.test( module ) ) {
+            // Use the module as the filename instead.
+            filename = module;
+            suffix = "";
+            // If the module name starts with "http://" or "https://"
+            if ( /^http[s]*:\/\//.test( module ) ) {
+                // Remove the basePath
+                basePath = "";
+            }
+        }
 
-		return obj;
-	}
+        return basePath + filename + suffix;
+    }
 
-	// Global default require options.
-	// To Do: Provide way to update.
-	$.require = function( customOptions, moduleNames, callback ) {
+    // Resolves a module based on a string.
+    function getLibrary( moduleName ) {
 
-		if ( $.isArray( customOptions ) || isString( customOptions ) ) {
-			callback = moduleNames;
-			moduleNames = customOptions;
-			customOptions = {};
-		}
+        var obj = window;
 
-		moduleNames = isString( moduleNames ) ? [ moduleNames ] : moduleNames;
-	
-		var options = $.extend( {}, amdOptions, customOptions ),
-			callbackArgs = [],
-			moduleCount = 0;
-			
-		function moduleReady( i, moduleName, module ) {
-			
-			if ( module ) {
-				modules[ moduleName ] = module;
-			}
-			
-			callbackArgs[i] = modules[ moduleName ];
-			
-			// All dependencies loaded, fire callback.
-			if ( ++moduleCount === moduleNames.length ) {
-				callback.apply( $, callbackArgs );
-			}
+        $.each( moduleName.split("."), function( i, name ) {
+            if ( typeof obj[ name ] === "object" ) {
+                obj = obj[ name ];
+            }
+            // Consider breaking each here.
+        });
 
-			// Tell the others.
-			if ( module ) {
-				$Observer.trigger( moduleName );
-			}
-		}
+        return obj;
+    }
 
-		$.each( moduleNames, function( i, moduleName ) {
+    // Global default require options.
+    // To Do: Provide way to update.
+    $.require = function( customOptions, moduleNames, callback ) {
 
-			function defineModule() {
+        if ( $.isArray( customOptions ) || isString( customOptions ) ) {
+            callback = moduleNames;
+            moduleNames = customOptions;
+            customOptions = {};
+        }
 
-				var module,
-					moduleDependencies,
-					moduleDefinition = moduleDefinitions[ moduleName ] || definedModules.shift();
+        moduleNames = isString( moduleNames ) ? [ moduleNames ] : moduleNames;
 
-				if ( moduleDefinition ) {
+        var options = $.extend( {}, amdOptions, customOptions ),
+            callbackArgs = [],
+            moduleCount = 0;
 
-					if ( moduleDependencies = moduleDefinition.d ) {
+        function moduleReady( i, moduleName, module ) {
 
-						$.require( customOptions, moduleDependencies, function(){
-							module = ( isFunction( moduleDefinition ) ? moduleDefinition.apply( $, arguments ) : moduleDefinition ) || $;
-							moduleReady( i, moduleName, module );
-						});
-	
-					} else {
-						
-						module = ( isFunction( moduleDefinition ) ? moduleDefinition.call($, $) : moduleDefinition ) || $;
-						moduleReady( i, moduleName, module );
-	
-					}
-	
-				// Otherwise see if we can snag the module by name (old skool).	
-				} else {
-					moduleReady( i, moduleName, getLibrary( moduleName ) );
-				}
-			}
+            if ( module ) {
+                modules[ moduleName ] = module;
+            }
 
-			// If this module has already been defined...
-			if ( moduleName in modules ) {
-				
-				// Check for the object.
-				if ( modules[ moduleName ] ){
-					moduleReady( i, moduleName );
-				// It's undefined, so wait a little bit.
-				} else {
-					$Observer.bind( moduleName, function(){
-						moduleReady( i, moduleName );
-					});
-				}
-				
-			// Otherwise we'll need to load and define on the fly,
-			// all the whilest managing dependencies.	
-			} else {
-				
-				// Temporarily give this guy something so incoming 
-				// module requests wait until the event is emmitted.
-				modules[ moduleName ] = undefined;
-				
-				// If the module was defined by some other script
-				if ( moduleDefinitions[ moduleName ] ) {
-					defineModule();
-				// Otherwise fetch the script based on the module name
-				} else {
-					$.ajax({
-						url: resolve( options, moduleName ),
-						dataType: "script",
-						cache: true,
-						complete: defineModule
-					});
-				}
-			}
-		});
-	};
-	
-	$.require.option = function( customOptions, value ) {
-	
-		if ( isString( customOptions ) ) {
-			if ( value ) {
-				amdOptions[ customOptions ] = value;
-			} else {
-				return amdOptions[ customOptions ];
-			}
-		} else {
-			$.extend( amdOptions, customOptions );
-		}
-	};
-	
+            callbackArgs[i] = modules[ moduleName ];
+
+            // All dependencies loaded, fire callback.
+            if ( ++moduleCount === moduleNames.length ) {
+                callback.apply( $, callbackArgs );
+            }
+
+            // Tell the others.
+            if ( module ) {
+                $Observer.trigger( moduleName );
+            }
+        }
+
+        $.each( moduleNames, function( i, moduleName ) {
+
+            function defineModule() {
+
+                var module,
+                    moduleDependencies,
+                    moduleDefinition = moduleDefinitions[ moduleName ] || definedModules.shift();
+
+                if ( moduleDefinition ) {
+
+                    if ( moduleDependencies = moduleDefinition.d ) {
+
+                        $.require( customOptions, moduleDependencies, function(){
+                            module = ( isFunction( moduleDefinition ) ? moduleDefinition.apply( $, arguments ) : moduleDefinition ) || $;
+                            moduleReady( i, moduleName, module );
+                        });
+
+                    } else {
+
+                        module = ( isFunction( moduleDefinition ) ? moduleDefinition.call($, $) : moduleDefinition ) || $;
+                        moduleReady( i, moduleName, module );
+
+                    }
+
+                // Otherwise see if we can snag the module by name (old skool).
+                } else {
+                    moduleReady( i, moduleName, getLibrary( moduleName ) );
+                }
+            }
+
+            // If this module has already been defined...
+            if ( moduleName in modules ) {
+
+                // Check for the object.
+                if ( modules[ moduleName ] ){
+                    moduleReady( i, moduleName );
+                // It's undefined, so wait a little bit.
+                } else {
+                    $Observer.bind( moduleName, function(){
+                        moduleReady( i, moduleName );
+                    });
+                }
+
+            // Otherwise we'll need to load and define on the fly,
+            // all the whilest managing dependencies.
+            } else {
+
+                // Temporarily give this guy something so incoming
+                // module requests wait until the event is emmitted.
+                modules[ moduleName ] = undefined;
+
+                // If the module was defined by some other script
+                if ( moduleDefinitions[ moduleName ] ) {
+                    defineModule();
+                // Otherwise fetch the script based on the module name
+                } else {
+                    $.ajax({
+                        url: resolve( options, moduleName ),
+                        dataType: "script",
+                        cache: true,
+                        complete: defineModule
+                    });
+                }
+            }
+        });
+    };
+
+    $.require.option = function( customOptions, value ) {
+
+        if ( isString( customOptions ) ) {
+            if ( value ) {
+                amdOptions[ customOptions ] = value;
+            } else {
+                return amdOptions[ customOptions ];
+            }
+        } else {
+            $.extend( amdOptions, customOptions );
+        }
+    };
+
 }(jQuery, this);
