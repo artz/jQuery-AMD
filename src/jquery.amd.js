@@ -32,6 +32,7 @@
             basePath: "",
             filename: function(str){ return str.toLowerCase(); },
             suffix: ".min.js"
+            onerror: function(err){ throw err; }
         };
 
     $.define = function( moduleName, moduleDependencies, moduleDefinition ) {
@@ -202,6 +203,10 @@
                         dataType: "script",
                         cache: true,
                         complete: defineModule
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            if (!errorThrown) errorThrown = new Error('Error loading "' + moduleName +'": ' + textStatus);
+                            options.onerror(errorThrown);
+                        }
                     });
                 }
             }
