@@ -121,6 +121,14 @@
             callbackArgs = [],
             moduleCount = 0;
 
+        // No dependencies set, fire callback.immediately
+        if ( moduleNames.length === 0 ) {
+            if ( $.isFunction( callback ) ) {
+                callback.apply( $, callbackArgs );
+            }
+            return;
+        }
+
         function moduleReady( i, moduleName, module ) {
 
             if ( module ) {
