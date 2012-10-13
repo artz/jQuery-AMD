@@ -158,6 +158,21 @@ asyncTest("Require Multiple Pre-defined AMD Libraries", function(){
 
 });
 
+asyncTest("Require Nothing", function(){
+
+    var timeout = setTimeout(function() {
+        ok( null, 'Callback never fired up.' );
+        start();
+    }, 1000);
+
+    $.require([], function( ) {
+        same( arguments.length, 0, "No arguments passed." );
+        clearTimeout(timeout);
+        start();
+    });
+
+});
+
 asyncTest("Customized Filename", function(){
 
     $.require({ basePath: "js/", filename: function(name){ return name.replace("/", "."); }, suffix: ".js" }, "custom/name", function( custom ){
