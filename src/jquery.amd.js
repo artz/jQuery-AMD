@@ -31,7 +31,7 @@
         amdOptions = {
             basePath: "",
             filename: function(str){ return str.toLowerCase(); },
-            suffix: ".min.js"
+            suffix: ".min.js",
             onerror: function(err){ throw err; }
         };
 
@@ -202,7 +202,7 @@
                         url: resolve( options, moduleName ),
                         dataType: "script",
                         cache: true,
-                        complete: defineModule
+                        complete: defineModule,
                         error: function(jqXHR, textStatus, errorThrown) {
                             if (!errorThrown) errorThrown = new Error('Error loading "' + moduleName +'": ' + textStatus);
                             options.onerror(errorThrown);
